@@ -33,6 +33,18 @@ app.use('/public', express.static(process.cwd() + '/public'));
 
 app.use(bodyParser.urlencoded({extended:true}));
 
+// creating mongoose schema
+
+const urlSchema = mongoose.Schema({
+  full_url : {
+    type : String
+  }, 
+  short_url : {
+    type : Number
+  }
+});
+
+const Url = mongoose.model('Url', urlSchema);
 
 
 
@@ -64,8 +76,38 @@ const get_shorturl = (body) => {
 }
 
 app.post('/api/shorturl/new', (req, res) => {
-  res.send(req.body);
-  get_shorturl(req.body);
+  
+  Url.find((err, doc) => {
+    if(err) {
+      console.log(err);
+    }else {
+      var present = false
+      var response_json = {}
+      doc.forEach((data) => {
+        if(data.full_url === req.body.url){
+          present = true
+          response_json = {"original_url" : data.full_url,
+                           "short_url"    : data.short_url}
+        }
+      });
+      
+      if (!present){
+        var url = new Url();
+          url.full_url = req.body.url;
+          url.save((err, doc) => {
+            if (err) {
+              console.log(err);
+            }else {
+              console.log('Successfully saved date in database');  
+            }
+          });
+          res.send('hello world');
+      }else {
+        res.json(response_json);
+      }
+    }
+  });
+  
 
 });
 
