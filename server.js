@@ -32,6 +32,12 @@ app.get("/api/hello", function (req, res) {
 });
 
 
+
+app.post('/api/shorturl/new', (req, res) => {
+  res.send("hello world");
+});
+
+
 app.listen(port, function () {
   console.log('Node.js listening ...');
 });
