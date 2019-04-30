@@ -76,13 +76,14 @@ const get_shorturl = (body) => {
 }
 
 app.post('/api/shorturl/new', (req, res) => {
-  
+  let database_length = 0;
   Url.find((err, doc) => {
     if(err) {
       console.log(err);
     }else {
       var present = false
       var response_json = {}
+      database_length = doc.length;
       doc.forEach((data) => {
         if(data.full_url === req.body.url){
           present = true
@@ -92,8 +93,12 @@ app.post('/api/shorturl/new', (req, res) => {
       });
       
       if (!present){
+        console.log();
         var url = new Url();
           url.full_url = req.body.url;
+          url.short_url = (database_length + 1);
+          response_json = {"original_url" : url.full_url, 
+                          "short_url" : url.short_url}
           url.save((err, doc) => {
             if (err) {
               console.log(err);
@@ -101,7 +106,8 @@ app.post('/api/shorturl/new', (req, res) => {
               console.log('Successfully saved date in database');  
             }
           });
-          res.send('hello world');
+          
+          res.json(response_json);
       }else {
         res.json(response_json);
       }
