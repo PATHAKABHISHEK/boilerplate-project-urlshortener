@@ -63,17 +63,7 @@ const validate = (body) =>{
 }
 
 
-const get_shorturl = (body) => {
-  // it will provide short url for specific url
-  if(validate()){
-    // here we will check database
-    // if database doesn't contain that host then we will add it to database 
 
-  }else{
-
-  }
-
-}
 
 app.post('/api/shorturl/new', (req, res) => {
   let database_length = 0;
@@ -81,18 +71,18 @@ app.post('/api/shorturl/new', (req, res) => {
     if(err) {
       console.log(err);
     }else {
-      var present = false
+      var full_url_present = false
       var response_json = {}
       database_length = doc.length;
       doc.forEach((data) => {
         if(data.full_url === req.body.url){
-          present = true
+          full_url_present = true
           response_json = {"original_url" : data.full_url,
                            "short_url"    : data.short_url}
         }
       });
       
-      if (!present){
+      if (!full_url_present){
         console.log();
         var url = new Url();
           url.full_url = req.body.url;
@@ -115,6 +105,31 @@ app.post('/api/shorturl/new', (req, res) => {
   });
   
 
+});
+
+app.get('/api/shorturl/:shorturl', (req, res) =>{
+  Url.find((err, doc) => {
+    if(err){
+      console.log(err);
+    }else{
+      let short_url_present = false;
+      let short_urls_full_url = '';
+      console.log(typeof(req.params.shorturl));
+      doc.forEach((data) => {
+        if(data.short_url == req.params.shorturl){
+          short_url_present = true;
+          short_urls_full_url = data.full_url;
+          console.log(short_urls_full_url)
+        }
+      });
+      if(short_url_present){
+        res.redirect(short_urls_full_url);
+      }else{
+        res.send('No such short url present');
+      }
+
+    }
+  })
 });
 
 
