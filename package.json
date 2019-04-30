@@ -7,11 +7,12 @@
 		"start": "node server.js"
 	},
 	"dependencies": {
+		"body-parser": "^1.15.2",
+		"cors": "^2.8.1",
+		"dns": "^0.2.2",
 		"express": "^5.0.0-alpha.2",
 		"mongodb": "^2.2.5",
-		"mongoose": "^4.5.7",
-		"cors": "^2.8.1",
-		"body-parser": "^1.15.2"
+		"mongoose": "^4.5.7"
 	},
 	"engines": {
 		"node": "4.4.5"

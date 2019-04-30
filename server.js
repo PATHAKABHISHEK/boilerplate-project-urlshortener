@@ -4,6 +4,7 @@ var express = require('express');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var dns = require('dns');
 
 var cors = require('cors');
 
@@ -60,12 +61,17 @@ app.get("/api/hello", function (req, res) {
 
 const validate = (body) =>{
   // all host name validation will goes here
+  
+
 }
 
 
 
 
 app.post('/api/shorturl/new', (req, res) => {
+  const regular_expression = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/
+  if(regular_expression.test(req.body.url)){
+      
   let database_length = 0;
   Url.find((err, doc) => {
     if(err) {
@@ -83,7 +89,6 @@ app.post('/api/shorturl/new', (req, res) => {
       });
       
       if (!full_url_present){
-        console.log();
         var url = new Url();
           url.full_url = req.body.url;
           url.short_url = (database_length + 1);
@@ -103,6 +108,12 @@ app.post('/api/shorturl/new', (req, res) => {
       }
     }
   });
+ 
+  }
+  
+  else {
+    res.send('Nothing to show');
+  }
   
 
 });
@@ -114,12 +125,10 @@ app.get('/api/shorturl/:shorturl', (req, res) =>{
     }else{
       let short_url_present = false;
       let short_urls_full_url = '';
-      console.log(typeof(req.params.shorturl));
       doc.forEach((data) => {
         if(data.short_url == req.params.shorturl){
           short_url_present = true;
           short_urls_full_url = data.full_url;
-          console.log(short_urls_full_url)
         }
       });
       if(short_url_present){
